@@ -7,10 +7,16 @@ Validated against current docs and local CLI help on March 11, 2026.
 ## Quick Setup (one command)
 
 ```sh
-make install-mcp-servers
+curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/install.sh | sh
 ```
 
-This installs the binaries, registers the `ai-log-mcp` MCP server with every detected AI agent CLI, and configures auto-accept for the three telemetry tools (`start_task`, `start_subtask`, `log_interruption`). Agents whose CLI is not installed are skipped automatically.
+This downloads and installs `ai-log`, `ai-log-report`, and `ai-log-mcp`, initialises the database, and registers the MCP server with every detected AI agent CLI. Agents whose CLI is not installed are skipped automatically.
+
+**From a local clone:**
+
+```sh
+make install-mcp-servers
+```
 
 ## Prerequisites
 
