@@ -66,3 +66,9 @@ Only task metadata is stored. No file paths, source code, prompts, or user messa
 ## Payload reference
 
 Full field reference: see the [technical spec](https://github.com/3n9/ai-agent-telemetry/blob/main/specs/05_technical_spec.md)
+
+---
+
+## Dashboard
+
+![AI Agent Telemetry Dashboard](https://raw.githubusercontent.com/3n9/ai-agent-telemetry/main/docs/screenshots/dashboard.png)
