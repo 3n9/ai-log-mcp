@@ -1,3 +1,5 @@
+github.com/3n9/ai-agent-telemetry v0.1.0 h1:lmq19rsUBVDmr1hJuAL8hhtBrr/QUUEDXteNLgMxL7s=
+github.com/3n9/ai-agent-telemetry v0.1.0/go.mod h1:+h8jLDrNreSFbfi1YbjcQUkG45vUia58NkVJzfK1KGM=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/golang-jwt/jwt/v5 v5.2.2 h1:Rl4B7itRWVtYIHFrSNd7vhTiz9UpLdi6gZhZ3wEeDy8=
