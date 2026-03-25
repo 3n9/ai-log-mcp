@@ -15,7 +15,7 @@ _SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo ".")"
 PROJECT_ROOT="$(cd "$_SCRIPT_DIR/.." 2>/dev/null && pwd || echo ".")"
 GLOBAL_DIR="$HOME/.ai-telemetry"
 PROMPTS_DEST="$GLOBAL_DIR/prompts-mcp"
-BLOCK_NAME="AI TELEMETRY MCP SYSTEM (AUTO-GENERATED)"
+BLOCK_NAME="AI TELEMETRY SYSTEM (AUTO-GENERATED)"
 BEGIN_MARKER="### BEGIN $BLOCK_NAME"
 END_MARKER="### END $BLOCK_NAME"
 
