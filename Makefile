@@ -5,7 +5,7 @@ DIST       := dist
 
 INSTALL_DIR ?= $(HOME)/.local/bin
 
-.PHONY: all clean build install uninstall install-global-mcp install-mcp-servers
+.PHONY: all clean build install uninstall install-prompts install-mcp-servers
 
 all: \
 	$(DIST)/darwin-arm64/ai-log-mcp \
@@ -52,8 +52,8 @@ uninstall:
 	@echo "uninstalled from $(INSTALL_DIR)"
 
 # ── MCP server registration + auto-accept for all agents ─────────────────────
-install-global-mcp:
-	@bash scripts/install-global-mcp.sh
+install-prompts:
+	@bash scripts/install-prompts.sh
 
 install-mcp-servers: install
 	@bash scripts/install-mcp-servers.sh

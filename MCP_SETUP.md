@@ -60,7 +60,7 @@ export AI_LOG_MODEL_NAME="gpt-5"
 If you want the global prompt files installed automatically, run:
 
 ```sh
-make install-global-mcp
+make install-prompts
 ```
 
 This installs the MCP-first prompt files, but it does not register the MCP server itself. You still need to configure each AI agent to launch `ai-log-mcp`.
@@ -99,7 +99,7 @@ claude mcp get ai-log-telemetry
 Prompt file:
 
 - Per project: copy [`prompts-mcp/claude-code.md`](./prompts-mcp/claude-code.md) into `CLAUDE.md`
-- Global: run `make install-global-mcp`
+- Global: run `make install-prompts`
 
 Notes:
 
@@ -124,7 +124,7 @@ gemini mcp get ai-log-telemetry
 Prompt file:
 
 - Per project: copy [`prompts-mcp/gemini.md`](./prompts-mcp/gemini.md) into `GEMINI.md`
-- Global: run `make install-global-mcp`
+- Global: run `make install-prompts`
 
 Notes:
 
@@ -149,7 +149,7 @@ codex mcp get ai-log-telemetry
 Prompt file:
 
 - Per project: copy [`prompts-mcp/codex.md`](./prompts-mcp/codex.md) into `AGENTS.md`
-- Global: run `make install-global-mcp`
+- Global: run `make install-prompts`
 
 Notes:
 
@@ -186,7 +186,7 @@ Copilot stores MCP server definitions in `~/.copilot/mcp-config.json`.
 Prompt file:
 
 - Per project: copy [`prompts-mcp/copilot.md`](./prompts-mcp/copilot.md) into `.github/copilot-instructions.md`
-- Global: run `make install-global-mcp`
+- Global: run `make install-prompts`
 
 Notes:
 

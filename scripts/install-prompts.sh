@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
+# Inject AI Telemetry MCP prompts into global agent config files.
+#
+# Usage (from a repo clone):
+#   bash scripts/install-prompts.sh
+#
+# Usage (standalone, no clone required):
+#   curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/install-prompts.sh | sh
 set -e
 
-PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+MCP_REPO="3n9/ai-log-mcp"
+RAW_BASE="https://raw.githubusercontent.com/$MCP_REPO/main"
+
+_SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo ".")"
+PROJECT_ROOT="$(cd "$_SCRIPT_DIR/.." 2>/dev/null && pwd || echo ".")"
 GLOBAL_DIR="$HOME/.ai-telemetry"
 PROMPTS_DEST="$GLOBAL_DIR/prompts-mcp"
 BLOCK_NAME="AI TELEMETRY MCP SYSTEM (AUTO-GENERATED)"
@@ -11,7 +22,21 @@ END_MARKER="### END $BLOCK_NAME"
 echo "🚀 Installing AI Telemetry MCP Prompts Globally..."
 
 mkdir -p "$PROMPTS_DEST"
-cp "$PROJECT_ROOT/prompts-mcp/"*.md "$PROMPTS_DEST/"
+
+_fetch_prompt() {
+    local name="$1"
+    local local_src="$PROJECT_ROOT/prompts-mcp/$name"
+    if [ -f "$local_src" ]; then
+        cp "$local_src" "$PROMPTS_DEST/$name"
+    else
+        echo "   Fetching $name from GitHub..."
+        curl -fsSL "$RAW_BASE/prompts-mcp/$name" -o "$PROMPTS_DEST/$name"
+    fi
+}
+
+for f in claude-code.md codex.md copilot.md gemini.md; do
+    _fetch_prompt "$f"
+done
 echo "✅ MCP prompts synced to $PROMPTS_DEST"
 
 safe_inject() {

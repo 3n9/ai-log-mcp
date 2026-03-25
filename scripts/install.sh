@@ -135,3 +135,20 @@ echo ""
 echo "✨ All done!"
 echo "   Run 'ai-log-report summary' to view telemetry."
 echo "   Run 'ai-log-report dashboard' for an HTML overview."
+
+# ── Inject MCP prompts into agent config files ───────────────────────────────
+
+echo ""
+echo "📝 Injecting MCP prompts into agent config files..."
+
+_SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo "")"
+PROMPTS_SCRIPT="$_SCRIPT_DIR/install-prompts.sh"
+
+if [ -f "$PROMPTS_SCRIPT" ]; then
+  bash "$PROMPTS_SCRIPT"
+else
+  curl -fsSL \
+    "https://raw.githubusercontent.com/$MCP_REPO/main/scripts/install-prompts.sh" \
+    -o "$TMP_DIR/install-prompts.sh"
+  bash "$TMP_DIR/install-prompts.sh"
+fi

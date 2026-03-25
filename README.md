@@ -52,7 +52,7 @@ Copy the appropriate prompt into your agent's config file:
 Or install all prompts globally:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/install-global-mcp.sh | sh
+curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/install-prompts.sh | sh
 ```
 
 ## Full setup guide
