@@ -24,7 +24,3 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )
-
-// Local development: use the sibling directory until v0.1.0 is tagged on GitHub.
-// Remove this replace directive after: git tag v0.1.0 && git push origin v0.1.0
-replace github.com/3n9/ai-agent-telemetry => ../ai-agent-telemetry
