@@ -20,6 +20,14 @@ This installs `ai-log`, `ai-log-report`, and `ai-log-mcp` to `~/.local/bin`, ini
 
 Override install directory: `INSTALL_DIR=/usr/local/bin sh`
 
+## Uninstall
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/uninstall.sh | sh
+```
+
+This removes the binaries, unregisters the MCP server from all detected agent CLIs, and removes the injected prompt blocks. The telemetry database is left intact.
+
 ## What gets installed
 
 | Binary | Source | Purpose |

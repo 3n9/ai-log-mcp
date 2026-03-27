@@ -5,7 +5,7 @@ DIST       := dist
 
 INSTALL_DIR ?= $(HOME)/.local/bin
 
-.PHONY: all clean build install uninstall install-prompts install-mcp-servers
+.PHONY: all clean build install uninstall install-prompts uninstall-prompts install-mcp-servers uninstall-mcp-servers
 
 all: \
 	$(DIST)/darwin-arm64/ai-log-mcp \
@@ -55,5 +55,11 @@ uninstall:
 install-prompts:
 	@bash scripts/install-prompts.sh
 
+uninstall-prompts:
+	@bash scripts/uninstall-prompts.sh
+
 install-mcp-servers: install
 	@bash scripts/install-mcp-servers.sh
+
+uninstall-mcp-servers:
+	@bash scripts/uninstall-mcp-servers.sh

@@ -224,6 +224,24 @@ If telemetry writes fail:
 ai-log emit '{"schema_version":1,"agent_name":"smoke-test","model_name":"manual","work_type":"analysis","complexity":"low","confidence":1,"estimated_time_min":1,"task_type":"task"}'
 ```
 
+## Uninstall
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/uninstall.sh | sh
+```
+
+This removes the binaries, unregisters the MCP server from all detected agent CLIs, and removes the injected prompt blocks from global agent config files.
+
+**From a local clone:**
+
+```sh
+make uninstall-mcp-servers
+make uninstall-prompts
+make uninstall
+```
+
+The telemetry database is **not** removed. To delete it manually, remove the file pointed to by `$AI_LOG_DB` (default: `$XDG_DATA_HOME/ai-agent-telemetry/telemetry.db`).
+
 ## References
 
 - Claude Code MCP docs: https://docs.anthropic.com/en/docs/claude-code/mcp
