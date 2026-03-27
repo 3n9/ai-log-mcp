@@ -10,7 +10,7 @@ Validated against current docs and local CLI help on March 11, 2026.
 curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/install.sh | sh
 ```
 
-This downloads and installs `ai-log`, `ai-log-report`, and `ai-log-mcp`, initialises the database, and registers the MCP server with every detected AI agent CLI. Agents whose CLI is not installed are skipped automatically.
+This downloads and installs `ai-log`, `ai-log-report`, and `ai-log-mcp`, initialises the database, registers the MCP server with every detected AI agent CLI, and injects the MCP prompts into each agent's global config file. Agents whose CLI is not installed are skipped automatically.
 
 **From a local clone:**
 

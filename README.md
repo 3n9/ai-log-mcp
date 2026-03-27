@@ -16,7 +16,7 @@ Agents call three tools directly, with no shell commands or JSON formatting requ
 curl -fsSL https://raw.githubusercontent.com/3n9/ai-log-mcp/main/scripts/install.sh | sh
 ```
 
-This installs `ai-log`, `ai-log-report`, and `ai-log-mcp` to `~/.local/bin`, initialises the database, and registers the MCP server with every detected agent CLI (Claude Code, Gemini CLI, OpenAI Codex, GitHub Copilot CLI).
+This installs `ai-log`, `ai-log-report`, and `ai-log-mcp` to `~/.local/bin`, initialises the database, registers the MCP server with every detected agent CLI (Claude Code, Gemini CLI, OpenAI Codex, GitHub Copilot CLI), and injects the MCP prompts into each agent's global config file.
 
 Override install directory: `INSTALL_DIR=/usr/local/bin sh`
 

@@ -23,6 +23,8 @@ If the client cannot provide agent/model metadata automatically, the prompts tel
 
 ## Per-Project Usage
 
+> **Note:** If you used the one-line install from the root README, prompts were already injected into your global agent config files. The table below is for per-project setup or if you are applying prompts manually.
+
 | File | Agent | How to apply |
 |---|---|---|
 | `claude-code.md` | Claude Code | Add to `CLAUDE.md` in your project root |
