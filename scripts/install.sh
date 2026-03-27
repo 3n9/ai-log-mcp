@@ -100,9 +100,10 @@ chmod +x "$INSTALL_DIR/ai-log" "$INSTALL_DIR/ai-log-report" "$INSTALL_DIR/ai-log
 echo "✅ Installed ai-log, ai-log-report, and ai-log-mcp to $INSTALL_DIR"
 
 if ! echo ":$PATH:" | grep -q ":$INSTALL_DIR:"; then
+  DISPLAY_DIR=$(echo "$INSTALL_DIR" | sed "s|^$HOME|\$HOME|")
   echo ""
   echo "⚠️  $INSTALL_DIR is not in your PATH. Add this to your shell profile:"
-  echo "   export PATH=\"\$PATH:$INSTALL_DIR\""
+  echo "   export PATH=\"\$PATH:$DISPLAY_DIR\""
   echo ""
   export PATH="$PATH:$INSTALL_DIR"
 fi
