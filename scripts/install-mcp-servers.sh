@@ -6,6 +6,7 @@ MCP_SERVER_CMD="ai-log-mcp"
 
 CONFIGURED=()
 SKIPPED=()
+FAILED=()
 
 echo "🚀 Installing AI Telemetry MCP Server for all supported agents..."
 
@@ -13,17 +14,19 @@ echo "🚀 Installing AI Telemetry MCP Server for all supported agents..."
 echo ""
 if command -v claude &>/dev/null; then
     echo "🤖 Configuring Claude Code..."
+    if (
+        set -e
 
-    # Re-running 'claude mcp add' with the same name replaces the existing entry
-    claude mcp add "$MCP_SERVER_NAME" --scope user --env AI_LOG_AGENT_NAME=claude-code -- "$MCP_SERVER_CMD"
-    echo "  MCP server registered"
+        # Re-running 'claude mcp add' with the same name replaces the existing entry
+        claude mcp add "$MCP_SERVER_NAME" --scope user --env AI_LOG_AGENT_NAME=claude-code -- "$MCP_SERVER_CMD"
+        echo "  MCP server registered"
 
-    # Patch ~/.claude/settings.json to add three tools to permissions.allow
-    CLAUDE_SETTINGS="$HOME/.claude/settings.json"
-    mkdir -p "$(dirname "$CLAUDE_SETTINGS")"
-    [ ! -f "$CLAUDE_SETTINGS" ] && echo '{}' > "$CLAUDE_SETTINGS"
+        # Patch ~/.claude/settings.json to add three tools to permissions.allow
+        CLAUDE_SETTINGS="$HOME/.claude/settings.json"
+        mkdir -p "$(dirname "$CLAUDE_SETTINGS")"
+        [ ! -f "$CLAUDE_SETTINGS" ] && echo '{}' > "$CLAUDE_SETTINGS"
 
-    python3 - "$CLAUDE_SETTINGS" <<'PY'
+        python3 - "$CLAUDE_SETTINGS" <<'PY'
 import json, sys, pathlib
 
 path = pathlib.Path(sys.argv[1]).expanduser()
@@ -45,9 +48,15 @@ if added:
 else:
     print("  permissions.allow already up to date")
 PY
-
-    echo "✅ Claude Code: registered + auto-accept configured"
-    CONFIGURED+=("Claude Code")
+    ); then
+        echo "✅ Claude Code: registered + auto-accept configured"
+        CONFIGURED+=("Claude Code")
+    else
+        echo "❌ Claude Code: configuration failed"
+        echo "   Manual setup: see https://docs.anthropic.com/en/docs/claude-code/mcp"
+        echo "   Run: claude mcp add ai-log-telemetry --scope user --env AI_LOG_AGENT_NAME=claude-code -- ai-log-mcp"
+        FAILED+=("Claude Code")
+    fi
 else
     echo "⚠️  Skipping Claude Code (claude not found in PATH)"
     SKIPPED+=("Claude Code")
@@ -57,26 +66,34 @@ fi
 echo ""
 if command -v gemini &>/dev/null; then
     echo "🤖 Configuring Gemini CLI..."
+    if (
+        set -e
 
-    # Skip registration if already present
-    if gemini mcp list 2>/dev/null | grep -q "$MCP_SERVER_NAME"; then
-        echo "  Server already registered, skipping"
-    else
-        # Try --trust for auto-accept; fall back silently if the flag is unknown
-        if gemini mcp add -s user --trust -e AI_LOG_AGENT_NAME=gemini-cli \
-               "$MCP_SERVER_NAME" "$MCP_SERVER_CMD" 2>/dev/null; then
-            echo "  MCP server registered with --trust (auto-accept enabled)"
+        # Skip registration if already present
+        if gemini mcp list 2>/dev/null | grep -q "$MCP_SERVER_NAME"; then
+            echo "  Server already registered, skipping"
         else
-            gemini mcp add -s user -e AI_LOG_AGENT_NAME=gemini-cli \
-                "$MCP_SERVER_NAME" "$MCP_SERVER_CMD"
-            echo "  MCP server registered"
-            echo "  💡 Note: --trust flag not supported by this Gemini version."
-            echo "     Tool confirmation prompts will appear; check 'gemini mcp add --help' for trust options."
+            # Use --env (long form) to avoid conflict with the top-level -e/--extensions flag.
+            # Try --trust for auto-accept; fall back silently if the flag is unknown.
+            if gemini mcp add -s user --trust --env AI_LOG_AGENT_NAME=gemini-cli \
+                   "$MCP_SERVER_NAME" "$MCP_SERVER_CMD" 2>/dev/null; then
+                echo "  MCP server registered with --trust (auto-accept enabled)"
+            else
+                gemini mcp add -s user --env AI_LOG_AGENT_NAME=gemini-cli \
+                    "$MCP_SERVER_NAME" "$MCP_SERVER_CMD"
+                echo "  MCP server registered"
+                echo "  💡 Note: --trust flag not supported by this Gemini version."
+                echo "     Tool confirmation prompts will appear; check 'gemini mcp add --help' for trust options."
+            fi
         fi
+    ); then
+        echo "✅ Gemini CLI: registered"
+        CONFIGURED+=("Gemini CLI")
+    else
+        echo "❌ Gemini CLI: configuration failed"
+        echo "   Manual setup: gemini mcp add -s user --env AI_LOG_AGENT_NAME=gemini-cli ai-log-telemetry ai-log-mcp"
+        FAILED+=("Gemini CLI")
     fi
-
-    echo "✅ Gemini CLI: registered"
-    CONFIGURED+=("Gemini CLI")
 else
     echo "⚠️  Skipping Gemini CLI (gemini not found in PATH)"
     SKIPPED+=("Gemini CLI")
@@ -86,21 +103,23 @@ fi
 echo ""
 if command -v codex &>/dev/null; then
     echo "🤖 Configuring OpenAI Codex CLI..."
+    if (
+        set -e
 
-    # Skip registration if already present
-    if codex mcp list 2>/dev/null | grep -q "$MCP_SERVER_NAME"; then
-        echo "  Server already registered, skipping"
-    else
-        codex mcp add "$MCP_SERVER_NAME" --env AI_LOG_AGENT_NAME=codex-cli -- "$MCP_SERVER_CMD" || true
-        echo "  MCP server registered"
-    fi
+        # Skip registration if already present
+        if codex mcp list 2>/dev/null | grep -q "$MCP_SERVER_NAME"; then
+            echo "  Server already registered, skipping"
+        else
+            codex mcp add "$MCP_SERVER_NAME" --env AI_LOG_AGENT_NAME=codex-cli -- "$MCP_SERVER_CMD" || true
+            echo "  MCP server registered"
+        fi
 
-    # Patch auto-trust in whichever config file Codex uses
-    CODEX_CONFIG_TOML="$HOME/.codex/config.toml"
-    CODEX_CONFIG_JSON="$HOME/.codex/settings.json"
+        # Patch auto-trust in whichever config file Codex uses
+        CODEX_CONFIG_TOML="$HOME/.codex/config.toml"
+        CODEX_CONFIG_JSON="$HOME/.codex/settings.json"
 
-    if [ -f "$CODEX_CONFIG_JSON" ]; then
-        python3 - "$CODEX_CONFIG_JSON" <<'PY'
+        if [ -f "$CODEX_CONFIG_JSON" ]; then
+            python3 - "$CODEX_CONFIG_JSON" <<'PY'
 import json, sys, pathlib
 
 path = pathlib.Path(sys.argv[1]).expanduser()
@@ -119,15 +138,20 @@ for t in ["start_task", "start_subtask", "log_interruption"]:
 path.write_text(json.dumps(data, indent=2) + "\n")
 print("  settings.json patched with auto-trust")
 PY
-    elif [ -f "$CODEX_CONFIG_TOML" ]; then
-        echo "  💡 Note: Codex uses $CODEX_CONFIG_TOML — manual trust configuration may be needed."
+        elif [ -f "$CODEX_CONFIG_TOML" ]; then
+            echo "  💡 Note: Codex uses $CODEX_CONFIG_TOML — manual trust configuration may be needed."
+        else
+            echo "  💡 Note: No Codex config file found. MCP server registered via CLI;"
+            echo "     manual trust configuration may be needed."
+        fi
+    ); then
+        echo "✅ Codex CLI: registered"
+        CONFIGURED+=("Codex CLI")
     else
-        echo "  💡 Note: No Codex config file found. MCP server registered via CLI;"
-        echo "     manual trust configuration may be needed."
+        echo "❌ Codex CLI: configuration failed"
+        echo "   Manual setup: codex mcp add ai-log-telemetry --env AI_LOG_AGENT_NAME=codex-cli -- ai-log-mcp"
+        FAILED+=("Codex CLI")
     fi
-
-    echo "✅ Codex CLI: registered"
-    CONFIGURED+=("Codex CLI")
 else
     echo "⚠️  Skipping OpenAI Codex CLI (codex not found in PATH)"
     SKIPPED+=("Codex CLI")
@@ -137,12 +161,14 @@ fi
 # Copilot CLI has no non-interactive 'mcp add' command; patch config file directly.
 echo ""
 echo "🤖 Configuring GitHub Copilot CLI..."
+if (
+    set -e
 
-COPILOT_MCP="$HOME/.copilot/mcp-config.json"
-mkdir -p "$(dirname "$COPILOT_MCP")"
-[ ! -f "$COPILOT_MCP" ] && echo '{"mcpServers": {}}' > "$COPILOT_MCP"
+    COPILOT_MCP="$HOME/.copilot/mcp-config.json"
+    mkdir -p "$(dirname "$COPILOT_MCP")"
+    [ ! -f "$COPILOT_MCP" ] && echo '{"mcpServers": {}}' > "$COPILOT_MCP"
 
-python3 - "$COPILOT_MCP" <<'PY'
+    python3 - "$COPILOT_MCP" <<'PY'
 import json, sys, pathlib
 
 path = pathlib.Path(sys.argv[1]).expanduser()
@@ -172,9 +198,15 @@ else:
 
 path.write_text(json.dumps(data, indent=2) + "\n")
 PY
-
-echo "✅ GitHub Copilot CLI: configured in $COPILOT_MCP"
-CONFIGURED+=("GitHub Copilot CLI")
+); then
+    echo "✅ GitHub Copilot CLI: configured in $HOME/.copilot/mcp-config.json"
+    CONFIGURED+=("GitHub Copilot CLI")
+else
+    echo "❌ GitHub Copilot CLI: configuration failed"
+    echo "   Manual setup: add the following to ~/.copilot/mcp-config.json under \"mcpServers\":"
+    echo '   "ai-log-telemetry": {"type":"stdio","command":"ai-log-mcp","env":{"AI_LOG_AGENT_NAME":"copilot-cli"}}'
+    FAILED+=("GitHub Copilot CLI")
+fi
 
 # ── SUMMARY ───────────────────────────────────────────────────────────────────
 echo ""
@@ -197,4 +229,13 @@ if [ ${#SKIPPED[@]} -gt 0 ]; then
     done
 fi
 
+if [ ${#FAILED[@]} -gt 0 ]; then
+    echo ""
+    echo "❌ Failed (see messages above for manual setup):"
+    for agent in "${FAILED[@]}"; do
+        echo "   • $agent"
+    done
+fi
+
 echo "═══════════════════════════════════════════════════"
+

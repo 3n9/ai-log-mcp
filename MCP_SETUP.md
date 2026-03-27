@@ -111,7 +111,7 @@ Notes:
 Register the MCP server at user scope:
 
 ```sh
-gemini mcp add -s user -e AI_LOG_AGENT_NAME=gemini-cli ai-log-telemetry ai-log-mcp
+gemini mcp add -s user --env AI_LOG_AGENT_NAME=gemini-cli ai-log-telemetry ai-log-mcp
 ```
 
 Verify:
@@ -129,7 +129,7 @@ Prompt file:
 Notes:
 
 - Gemini also supports project scope via `-s project`
-- Do not use `--trust` unless you intentionally want to suppress tool confirmation prompts
+- Add `--trust` to suppress tool confirmation prompts (auto-accept all tools from this server)
 
 ## OpenAI Codex CLI
 
